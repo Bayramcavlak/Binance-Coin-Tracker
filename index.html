@@ -47,7 +47,7 @@
               <div class="input-group">
                 <select class="form-select">
                   <option :value="symbol.symbol" v-for="symbol in symbols">
-                    {{symbol.symbol}}
+                    {{symbol.symbol}} {{symbol.lastPrice}}
                   </option>
                 </select>
                 <button class="btn btn-outline-secondary" type="button">
