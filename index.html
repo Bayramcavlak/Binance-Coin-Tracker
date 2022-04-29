@@ -19,8 +19,12 @@
   </head>
   <body>
     <div class="container" id="app">
-      <div class="pt-3">
-        <button class="btn btn-md btn-outline-primary" @click="refreshTracker">
+      <div class="pt-3 d-flex justify-content-end">
+        <button
+          v-if="isRefresh"
+          class="btn btn-md btn-outline-primary"
+          @click="refreshTracker"
+        >
           Refresh
         </button>
         <button
@@ -33,13 +37,24 @@
         </button>
       </div>
 
-      <hr />
+      <hr>
 
       <!-- Modal For Add Symbol-->
       <div class="modal fade" id="modalForAddSymbol">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-body">...</div>
+            <div class="modal-body">
+              <div class="input-group">
+                <select class="form-select">
+                  <option :value="symbol.symbol" v-for="symbol in symbols">
+                    {{symbol.symbol}}
+                  </option>
+                </select>
+                <button class="btn btn-outline-secondary" type="button">
+                  Add
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -50,17 +65,29 @@
         el: "#app",
         data: {
           symbols: [],
+          list_symbol: [],
+          isRefresh: false,
+          apiBaseUrl: "https://api2.binance.com/api/v3/ticker/24hr",
         },
         methods: {
           addSymbols() {
             console.log("add symbols function");
           },
           refreshTracker() {
-            console.log("refreshTracker function");
+            //
+          },
+          /* get symbols from Binance */
+          async getSymbolsFromBinance() {
+            response = await fetch(this.apiBaseUrl, {
+              method: "GET",
+            });
+            const data = await response.json();
+            this.symbols = data;
+            console.log(this.symbols);
           },
         },
         created() {
-          //
+          this.getSymbolsFromBinance();
         },
       });
     </script>
