@@ -19,17 +19,30 @@
   </head>
   <body>
     <div class="container" id="app">
-
       <div class="pt-3">
         <button class="btn btn-md btn-outline-primary" @click="refreshTracker">
           Refresh
         </button>
-        <button class="btn btn-md btn-outline-primary" @click="addSymbols">
+        <button
+          class="btn btn-md btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modalForAddSymbol"
+          @click="addSymbols"
+        >
           Add Symbol
         </button>
       </div>
 
       <hr />
+
+      <!-- Modal For Add Symbol-->
+      <div class="modal fade" id="modalForAddSymbol">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">...</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
