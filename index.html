@@ -18,22 +18,38 @@
     <title>Binance Coin Tracker</title>
   </head>
   <body>
-
     <div class="container" id="app">
-     {{message}}
+
+      <div class="pt-3">
+        <button class="btn btn-md btn-outline-primary" @click="refreshTracker">
+          Refresh
+        </button>
+        <button class="btn btn-md btn-outline-primary" @click="addSymbols">
+          Add Symbol
+        </button>
+      </div>
+
+      <hr />
     </div>
 
     <script>
       var app = new Vue({
         el: "#app",
         data: {
-          message: 'Vue 2 message',
+          symbols: [],
+        },
+        methods: {
+          addSymbols() {
+            console.log("add symbols function");
+          },
+          refreshTracker() {
+            console.log("refreshTracker function");
+          },
         },
         created() {
-          console.log("Vue 2 start...");
+          //
         },
       });
     </script>
-    
   </body>
 </html>
