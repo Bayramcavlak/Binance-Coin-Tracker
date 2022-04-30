@@ -31,32 +31,17 @@
     <div class="col">
       <div class="col-12">
 
-        <ul class="list-group pt-2">
-          <li class="list-group-item position-relative d-flex justify-content-between align-items-center">
-            <span>SymbolName-<p>LastPrice - WeightedAvgprice</p></span>
+        <ul class="list-group pt-2" v-for="list,index in listed_coins">
+          <li v-if="index==0" class="list-group-item position-relative d-flex justify-content-between align-items-center">
+            <span>{{list}}-<p>LastPrice - WeightedAvgprice</p></span>
             <span><button class="btn btn-sm btn-danger">remove</button></span>
           </li>
-        </ul>
 
-        <ul class="list-group pt-2">
-          <li class="list-group-item position-relative d-flex justify-content-between align-items-center">
-            <span>SymbolName-<p>LastPrice - WeightedAvgprice</p></span>
+          <li v-if="index!=0" class="list-group-item position-relative d-flex justify-content-between align-items-center">
+            <span>{{list}}-<p>LastPrice - WeightedAvgprice</p></span>
             <span><button class="btn btn-sm btn-danger">remove</button></span>
           </li>
-        </ul>
 
-        <ul class="list-group pt-2">
-          <li class="list-group-item position-relative d-flex justify-content-between align-items-center">
-            <span>SymbolName-<p>LastPrice - WeightedAvgprice</p></span>
-            <span><button class="btn btn-sm btn-danger">remove</button></span>
-          </li>
-        </ul>
-
-        <ul class="list-group pt-2">
-          <li class="list-group-item position-relative d-flex justify-content-between align-items-center">
-            <span>SymbolName-<p>LastPrice - WeightedAvgprice</p></span>
-            <span><button class="btn btn-sm btn-danger">remove</button></span>
-          </li>
         </ul>
 
       </div>
@@ -65,24 +50,24 @@
     <!-- Modal For Add Symbol-->
     <div class="modal fade" id="modalForAddSymbol">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
+        <div class="modal-content" style="border-radius: 5px;">
+          <div class="modal-body" style="height: 300px;">
 
-            <div class="container">
+            <div class="container p-3">
               <div class="form-group col-12">
 
                 <div class="input-group mb-3">
-                  <input type="text" class="form-control" :value="search_symbols" placeholder="search symbols"
-                    @input="searchSymbols">
+                  <input type="text" class="form-control" placeholder="search symbols" @input="searchSymbols">
                 </div>
 
                 <div class="input-group">
-                  <select class="form-select">
+                  <select class="form-select" v-model="selected_symbol">
+                    <option disabled value="">Please select symbol</option>
                     <option :value="coin.name" v-for="coin in symbol_list">
                       {{coin.name}} - {{coin.lastPrice}}
                     </option>
                   </select>
-                  <button class="btn btn-success" type="button">
+                  <button class="btn btn-success" type="button" @click="addCoinToList">
                     Add
                   </button>
                 </div>
@@ -103,7 +88,8 @@
       data: {
         symbols: [],
         symbol_list: [],
-        refresh_coin_lis: [],
+        listed_coins: [],
+        selected_symbol: '',
         search_symbols: '',
         isRefresh: false,
         apiBaseUrl: "https://api2.binance.com/api/v3/ticker/24hr",
@@ -119,11 +105,21 @@
         },
 
         addCoinToList() {
-          //
+         this.listed_coins.push(this.selected_symbol)
+         console.log("select:", this.listed_coins)
         },
 
         searchSymbols() {
-          console.log("search_symbols:", event.target.value)
+          const searchText = (event.target.value).toUpperCase()
+
+          if (searchText === '') {
+            this.parseSembols()
+          }
+          const filtered = this.symbol_list.filter(
+            f => f.name.includes(searchText) || f.lastPrice.includes(searchText)
+          )
+          this.symbol_list = filtered
+
         },
 
         /* get symbols from Binance */
@@ -132,7 +128,7 @@
             method: "GET",
           });
           const data = await response.json()
-          this.symbols = data
+          this.symbols = data.sort((a, b) => a.symbol > b.symbol)
           // console.log(this.symbols)
         },
 
