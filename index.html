@@ -114,12 +114,13 @@
         },
 
         refreshAllData() {
-          console.log("refreshing...")
+          console.log("refreshing...", Date())
           const REFRESH = this.symbols_refresh.filter(coin =>
             this.listed_coins.some(list => list.symbol === coin.symbol)
           )
 
           this.listed_coins = REFRESH
+          this.firstCoinOfList()
           console.log(this.listed_coins)
         },
 
