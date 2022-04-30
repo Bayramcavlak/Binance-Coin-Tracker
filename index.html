@@ -31,9 +31,10 @@
       <div class="col-12">
 
         <ul class="list-group pt-2" v-for="list,index in first_coins">
-          <li class="list-group-item border border-2 border-primary position-relative d-flex justify-content-between align-items-center">
+          <li
+            class="list-group-item border border-2 border-primary position-relative d-flex justify-content-between align-items-center">
             <span>{{list.symbol}}-<p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
-            <span><button class="btn btn-sm btn-danger">remove</button></span>
+            <span><button class="btn btn-sm btn-danger" @click="removeCoinFromList(list.symbol)">remove</button></span>
           </li>
 
         </ul>
@@ -43,7 +44,7 @@
           <li v-if="index!=0"
             class="list-group-item position-relative d-flex justify-content-between align-items-center">
             <span>{{list.symbol}}-<p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
-            <span><button class="btn btn-sm btn-danger">remove</button></span>
+            <span><button class="btn btn-sm btn-danger" @click="removeCoinFromList(list.symbol)">remove</button></span>
           </li>
 
         </ul>
@@ -107,13 +108,43 @@
         },
 
         refreshTracker() {
+          this.getRefreshSymbols()
           const REFRESH_TIME = setTimeout(this.getRefreshSymbols, this.MINUTES)
         },
 
         addCoinToList() {
           const SYMBOL = this.selected_symbol
+
+          if (this.listed_coins.some(coin => coin.symbol === SYMBOL)) {
+            alert("This symbol selected")
+            return
+          }
+
           let filtered = this.symbols.filter(coin => coin.symbol === SYMBOL)
           this.listed_coins.push(filtered[0])
+
+          // to parse first coin in the list
+          this.firstCoinOfList()
+        },
+
+        removeCoinFromList(_symbol) {
+          const SYMBOL = _symbol
+
+          if (this.listed_coins.some(coin => coin.symbol === SYMBOL)) {
+            let filtered = this.listed_coins.filter(coin => coin.symbol !== SYMBOL)
+            this.listed_coins = filtered
+          }
+
+          if (this.first_coins.some(coin => coin.symbol === SYMBOL)) {
+            let filtered = this.first_coins.filter(coin => coin.symbol !== SYMBOL)
+            this.first_coins = filtered
+          }
+
+          // to parse first coin in the list
+          //this.firstCoinRefresh(this.listed_coins)
+        },
+
+        firstCoinOfList() {
           this.first_coins = this.listed_coins.filter((coin, index) => index == 0)
         },
 
@@ -138,7 +169,6 @@
           });
           const data = await response.json()
           this.symbols = data.sort((a, b) => a.symbol > b.symbol)
-          console.log(this.symbols)
         },
 
         /* get symbols from Binance for refresh */
