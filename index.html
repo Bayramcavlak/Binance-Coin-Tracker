@@ -19,8 +19,7 @@
       <button v-if="this.listed_coins.length>0" class="btn btn-md btn-outline-dark m-1" @click="refreshTracker">
         Refresh
       </button>
-      <button class="btn btn-md btn-outline-dark m-1" data-bs-toggle="modal" data-bs-target="#modalForAddSymbol"
-        @click="openModalForAdd">
+      <button class="btn btn-md btn-outline-dark m-1" data-bs-toggle="modal" data-bs-target="#modalForAddSymbol">
         Add Symbol
       </button>
     </div>
@@ -41,7 +40,7 @@
 
         <ul class="list-group pt-2" v-for="list,index in listed_coins">
 
-          <li v-if="index!=0"
+          <li v-if="index>0"
             class="list-group-item position-relative d-flex justify-content-between align-items-center">
             <span>{{list.symbol}}-<p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
             <span><button class="btn btn-sm btn-danger" @click="removeCoinFromList(list.symbol)">remove</button></span>
@@ -98,25 +97,37 @@
         first_coins: [],
         selected_symbol: '',
         search_symbols: '',
+        refresh_api: '',
         MINUTES: 10 * 60 * 1000, // 10 Minutes
         apiBaseUrl: "https://api2.binance.com/api/v3/ticker/24hr",
       },
       methods: {
 
-        openModalForAdd() {
-          this.parseSembols()
-        },
-
         refreshTracker() {
           this.getRefreshSymbols()
-          const REFRESH_TIME = setTimeout(this.getRefreshSymbols, this.MINUTES)
+
+          if (this.refresh_api > 0) {
+            clearTimeout(this.refresh_api)
+          }
+
+          this.refresh_api = setTimeout(this.getRefreshSymbols, this.MINUTES)
+        },
+
+        refreshAllData() {
+          console.log("refreshing...")
+          const REFRESH = this.symbols_refresh.filter(coin =>
+            this.listed_coins.some(list => list.symbol === coin.symbol)
+          )
+
+          this.listed_coins = REFRESH
+          console.log(this.listed_coins)
         },
 
         addCoinToList() {
           const SYMBOL = this.selected_symbol
 
           if (this.listed_coins.some(coin => coin.symbol === SYMBOL)) {
-            alert("This symbol selected")
+            alert("This symbol was selected before")
             return
           }
 
@@ -125,6 +136,7 @@
 
           // to parse first coin in the list
           this.firstCoinOfList()
+          this.refreshTracker()
         },
 
         removeCoinFromList(_symbol) {
@@ -178,6 +190,7 @@
           });
           const data = await response.json()
           this.symbols_refresh = data.sort((a, b) => a.symbol > b.symbol)
+          this.refreshAllData()
         },
 
         parseSembols() {
