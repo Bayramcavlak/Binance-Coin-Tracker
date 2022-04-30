@@ -67,16 +67,30 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
-            <div class="input-group">
-              <select class="form-select">
-                <option :value="coin.name" v-for="coin in symbol_list">
-                  {{coin.name}} - {{coin.lastPrice}}
-                </option>
-              </select>
-              <button class="btn btn-outline-secondary" type="button">
-                Add
-              </button>
+
+            <div class="container">
+              <div class="form-group col-12">
+
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" :value="search_symbols" placeholder="search symbols"
+                    @input="searchSymbols">
+                </div>
+
+                <div class="input-group">
+                  <select class="form-select">
+                    <option :value="coin.name" v-for="coin in symbol_list">
+                      {{coin.name}} - {{coin.lastPrice}}
+                    </option>
+                  </select>
+                  <button class="btn btn-success" type="button">
+                    Add
+                  </button>
+                </div>
+
+              </div>
+
             </div>
+
           </div>
         </div>
       </div>
@@ -90,6 +104,7 @@
         symbols: [],
         symbol_list: [],
         refresh_coin_lis: [],
+        search_symbols: '',
         isRefresh: false,
         apiBaseUrl: "https://api2.binance.com/api/v3/ticker/24hr",
       },
@@ -105,6 +120,10 @@
 
         addCoinToList() {
           //
+        },
+
+        searchSymbols() {
+          console.log("search_symbols:", event.target.value)
         },
 
         /* get symbols from Binance */
