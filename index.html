@@ -16,7 +16,7 @@
 <body>
   <div class="container" id="app">
     <div class="pt-4 d-flex justify-content-end">
-      <button v-if="this.listed_coins.length>0" class="btn btn-md btn-outline-dark m-1" @click="refreshTracker">
+      <button v-if="this.listed_coins.length>0" class="btn btn-md btn-outline-dark m-1" @click="refreshForButton">
         Refresh
       </button>
       <button class="btn btn-md btn-outline-dark m-1" data-bs-toggle="modal" data-bs-target="#modalForAddSymbol">
@@ -32,7 +32,7 @@
         <ul class="list-group pt-2" v-for="list,index in first_coins">
           <li
             class="list-group-item border border-2 border-primary position-relative d-flex justify-content-between align-items-center">
-            <span>{{list.symbol}}-<p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
+            <span>{{list.symbol}} <p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
             <span><button class="btn btn-sm btn-danger" @click="removeCoinFromList(list.symbol)">remove</button></span>
           </li>
 
@@ -42,7 +42,7 @@
 
           <li v-if="index>0"
             class="list-group-item position-relative d-flex justify-content-between align-items-center">
-            <span>{{list.symbol}}-<p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
+            <span>{{list.symbol}} <p>{{list.lastPrice}} - {{list.weightedAvgPrice}}</p></span>
             <span><button class="btn btn-sm btn-danger" @click="removeCoinFromList(list.symbol)">remove</button></span>
           </li>
 
@@ -103,14 +103,19 @@
       },
       methods: {
 
-        refreshTracker() {
+        refreshForButton() {
           this.getRefreshSymbols()
+        },
 
-          if (this.refresh_api > 0) {
-            clearTimeout(this.refresh_api)
+        refreshTracker() {
+          if (!this.listed_coins.length > 0) {
+            console.log("empty list !")
+            retun
           }
-
-          this.refresh_api = setTimeout(this.getRefreshSymbols, this.MINUTES)
+          this.getRefreshSymbols()
+          setInterval(() => {
+            this.getRefreshSymbols()
+          }, this.MINUTES);
         },
 
         refreshAllData() {
@@ -118,7 +123,6 @@
           const REFRESH = this.symbols_refresh.filter(coin =>
             this.listed_coins.some(list => list.symbol === coin.symbol)
           )
-
           this.listed_coins = REFRESH
           this.firstCoinOfList()
           console.log(this.listed_coins)
