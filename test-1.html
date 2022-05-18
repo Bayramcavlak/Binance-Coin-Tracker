@@ -17,6 +17,11 @@
     <div id="app">
         {{message}}
     </div>
+
+    <div id="app2">
+        <button @click="getTest">Bunu Tıkla</button>
+        {{message2}}
+    </div>
 </body>
 
 <script>
@@ -27,6 +32,23 @@
             }
         },
     }).mount('#app')
+
+    var test = Vue.createApp({
+        data(){
+            return{
+                message2:'numanhan duran'
+            }
+        },
+        methods: {
+            getTest(){
+               this.message2="bu tuşa basıldı" 
+            }
+        },
+       
+        created() {
+            console.log("ilk çalışan")
+        },
+    }).mount('#app2')
 </script>
 
 </html>
